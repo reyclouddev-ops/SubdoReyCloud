@@ -17,6 +17,11 @@ const {
     createDNS
 } = require("../utils/cloudflare")
 
+const {
+    deleteDNS,
+    updateProxy
+} = require("../utils/cloudflare")
+
 
 const MAIN_DOMAIN =
 process.env.MAIN_DOMAIN ||
@@ -274,7 +279,130 @@ result.push(domain)
 
 }
 
+// ======================
+// PROXY ON OFF
+// ======================
 
+router.put(
+"/proxy/:id",
+auth,
+async(req,res)=>{
+
+
+try{
+
+
+const dns =
+await DNS.findById(
+req.params.id
+)
+
+
+
+const status =
+req.body.proxied
+
+
+
+await updateProxy(
+dns.recordId,
+status
+)
+
+
+
+dns.proxy =
+status
+
+
+await dns.save()
+
+
+
+res.json({
+
+success:true,
+
+proxy:status
+
+})
+
+
+}catch(err){
+
+res.status(500).json({
+
+message:err.message
+
+})
+
+}
+
+
+})
+
+    // ======================
+// DELETE DNS
+// ======================
+
+router.delete(
+"/delete/:id",
+auth,
+async(req,res)=>{
+
+
+try{
+
+
+const dns =
+await DNS.findById(
+req.params.id
+)
+
+
+
+if(!dns)
+return res.status(404).json({
+message:"DNS tidak ditemukan"
+})
+
+
+
+await deleteDNS(
+dns.recordId
+)
+
+
+
+await DNS.deleteOne({
+
+_id:dns._id
+
+})
+
+
+
+res.json({
+
+success:true,
+
+message:"DNS berhasil dihapus"
+
+})
+
+
+}catch(err){
+
+res.status(500).json({
+
+message:err.message
+
+})
+
+}
+
+
+})
 
 
 // tambah limit user
@@ -324,6 +452,79 @@ err.message
 
 })
 
+
+}
+
+
+})
+
+// ======================
+// LIST DNS
+// ======================
+
+router.get(
+"/list",
+auth,
+async(req,res)=>{
+
+try{
+
+
+const user =
+await User.findById(
+req.user.id
+)
+
+
+
+let data
+
+
+
+if(
+user.role === "Owner" ||
+user.role === "Admin"
+){
+
+data =
+await DNS.find()
+.populate(
+"owner",
+"username email"
+)
+
+
+}else{
+
+
+data =
+await DNS.find({
+
+owner:user._id
+
+})
+
+
+}
+
+
+
+res.json({
+
+success:true,
+
+data
+
+})
+
+
+}catch(err){
+
+res.status(500).json({
+
+message:err.message
+
+})
 
 }
 
