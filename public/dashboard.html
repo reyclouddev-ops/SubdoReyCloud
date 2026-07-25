@@ -16,31 +16,113 @@ ReyCloud Dashboard
 <body>
 
 
+<div class="navbar">
+
+<div class="logo">
+☁️ ReyCloud
+</div>
+
+
+<div class="menu">
+
+<a href="dashboard.html">
+Home
+</a>
+
+<a href="mydns.html">
+DNS
+</a>
+
+<a href="profile.html">
+Profile
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
 <div class="card">
 
 
 <h2>
-👋 Hallo <span id="username"></span>
+👋 Hallo 
+<span id="username">
+</span>
 </h2>
 
 
 <h3>
 Role:
-<span id="role"></span>
+<span id="role">
+</span>
 </h3>
 
 
 <hr>
 
 
-<div id="menu"></div>
+
+<div class="stat">
+
+
+<div class="stat-card">
+
+<h3 id="dnsCount">
+0
+</h3>
+
+<p>
+🌐 Total DNS
+</p>
+
+</div>
+
+
+
+<div class="stat-card">
+
+<h3 id="limit">
+5/5
+</h3>
+
+<p>
+☁️ Limit Create
+</p>
+
+</div>
+
+
+</div>
+
 
 
 <br>
 
 
+
+<div id="menu"></div>
+
+
+
+<br>
+
+
+<button onclick="location.href='mydns.html'">
+
+🌐 My DNS
+
+</button>
+
+
+
 <button onclick="logout()">
-Logout
+
+🚪 Logout
+
 </button>
 
 
@@ -49,6 +131,73 @@ Logout
 
 
 <script src="js/dashboard.js"></script>
+
+
+<script>
+
+
+async function loadStats(){
+
+
+const token =
+localStorage.getItem("token")
+
+
+try{
+
+
+const res =
+await fetch(
+"/api/dns/list",
+{
+
+headers:{
+
+Authorization:
+"Bearer "+token
+
+}
+
+}
+
+)
+
+
+const json =
+await res.json()
+
+
+
+if(json.data){
+
+
+document.getElementById(
+"dnsCount"
+).innerHTML =
+json.data.length
+
+
+}
+
+
+
+}catch(e){
+
+console.log(e)
+
+}
+
+
+}
+
+
+
+loadStats()
+
+
+
+</script>
+
 
 </body>
 
