@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>
+Create DNS - ReyCloud
+</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+<h2>
+☁️ Create Subdomain
+</h2>
+
+
+<label>
+Jenis DNS
+</label>
+
+
+<select id="type">
+
+<option value="panel">
+Panel Hosting
+</option>
+
+<option value="website">
+Website
+</option>
+
+<option value="cname">
+Vercel / CNAME
+</option>
+
+</select>
+
+
+
+<label>
+Hostname
+</label>
+
+
+<input 
+id="hostname"
+placeholder="contoh: server01">
+
+
+
+<label>
+Target / IP VPS
+</label>
+
+
+<input 
+id="target"
+placeholder="103.xxx.xxx.xxx">
+
+
+
+<label>
+
+Cloudflare Proxy
+
+</label>
+
+
+<select id="proxy">
+
+
+<option value="true">
+🟠 ON
+</option>
+
+
+<option value="false">
+⚪ OFF
+</option>
+
+
+</select>
+
+
+
+<button onclick="createDNS()">
+
+CREATE DNS
+
+</button>
+
+
+<br><br>
+
+
+<a href="dashboard.html">
+← Dashboard
+</a>
+
+
+
+<div id="result"></div>
+
+
+</div>
+
+
+<script src="js/create.js"></script>
+
+
+</body>
+
+</html>
