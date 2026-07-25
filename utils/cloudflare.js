@@ -102,9 +102,56 @@ proxied
 }
 
 
+
+// DELETE DNS
+
+async function deleteDNS(id){
+
+
+return await cf.delete(
+
+`/zones/${process.env.CF_ZONE_ID}/dns_records/${id}`
+
+)
+
+
+}
+
+
+
+// UPDATE PROXY
+
+async function updateProxy(
+id,
+proxied
+){
+
+
+return await cf.patch(
+
+`/zones/${process.env.CF_ZONE_ID}/dns_records/${id}`,
+
+{
+
+proxied
+
+}
+
+)
+
+
+}
+
+
+
 module.exports = {
 
 createDNS,
-detectType
+
+detectType,
+
+deleteDNS,
+
+updateProxy
 
 }
