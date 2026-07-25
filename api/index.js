@@ -22,7 +22,7 @@ connectDB()
 app.get("/api", (req,res)=>{
     res.json({
         success:true,
-        name:"ReyCloud Cloud Manager"
+        name:"ReyCloud Manager"
     })
 })
 
