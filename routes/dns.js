@@ -1,5 +1,4 @@
 const express = require("express")
-
 const router = express.Router()
 
 const auth =
@@ -15,9 +14,8 @@ const checkLimit =
 require("../utils/limit")
 
 const {
-createDNS
-}=require("../utils/cloudflare")
-
+    createDNS
+} = require("../utils/cloudflare")
 
 
 const MAIN_DOMAIN =
@@ -26,7 +24,9 @@ process.env.MAIN_DOMAIN ||
 
 
 
+// ======================
 // CREATE DNS
+// ======================
 
 router.post(
 "/create",
@@ -38,21 +38,29 @@ try{
 
 
 const {
-hostname,
-target,
-type
-}=req.body
+    hostname,
+    target,
+    type,
+    proxied
+} = req.body
 
 
 
 const user =
 await User.findById(
-req.user.id
+    req.user.id
 )
 
 
 
-// cek limit
+if(!user)
+return res.status(404).json({
+    message:"User tidak ditemukan"
+})
+
+
+
+// cek limit user free
 
 const allowed =
 await checkLimit(user)
@@ -60,6 +68,7 @@ await checkLimit(user)
 
 
 if(!allowed)
+
 return res.status(403).json({
 
 message:
@@ -69,72 +78,134 @@ message:
 
 
 
-// =================
-// PANEL TYPE
-// =================
-
 let result = []
 
 
 
+// ======================
+// PANEL + NODE
+// ======================
+
 if(type === "panel"){
 
 
-const panel =
+
+const panelDomain =
 `${hostname}.${MAIN_DOMAIN}`
 
 
-const node =
+const nodeDomain =
 `node-${hostname}.${MAIN_DOMAIN}`
 
 
 
-result.push(panel)
-result.push(node)
+// CREATE CLOUDFLARE
 
+const panelDNS =
+await createDNS({
 
-
-await DNS.create({
-
-hostname:`${hostname}`,
-
-domain:panel,
+name:panelDomain,
 
 target,
 
-type:"A",
+proxied:
+proxied ?? false
 
-proxy:false,
+})
+
+
+const nodeDNS =
+await createDNS({
+
+name:nodeDomain,
+
+target,
+
+proxied:
+proxied ?? false
+
+})
+
+
+
+
+// SIMPAN PANEL
+
+await DNS.create({
+
+hostname:
+`${hostname}`,
+
+domain:
+panelDomain,
+
+target,
+
+type:
+panelDNS.type,
+
+proxy:
+panelDNS.proxied,
+
+recordId:
+panelDNS.id,
 
 owner:user._id,
 
 createdBy:{
+
 username:user.username,
+
 role:user.role
+
 }
 
 })
 
 
 
+
+// SIMPAN NODE
+
 await DNS.create({
 
-hostname:`node-${hostname}`,
+hostname:
+`node-${hostname}`,
 
-domain:node,
+domain:
+nodeDomain,
 
 target,
 
-type:"A",
+type:
+nodeDNS.type,
 
-proxy:false,
+proxy:
+nodeDNS.proxied,
+
+recordId:
+nodeDNS.id,
 
 owner:user._id,
 
 createdBy:{
+
 username:user.username,
+
 role:user.role
+
 }
+
+})
+
+
+result.push({
+
+panel:
+panelDomain,
+
+node:
+nodeDomain
 
 })
 
@@ -144,12 +215,27 @@ role:user.role
 
 
 
+// ======================
+// SINGLE DNS
+// ======================
+
+
 const domain =
 `${hostname}.${MAIN_DOMAIN}`
 
 
 
-result.push(domain)
+const cloudflare =
+await createDNS({
+
+name:domain,
+
+target,
+
+proxied:
+proxied ?? false
+
+})
 
 
 
@@ -161,26 +247,37 @@ domain,
 
 target,
 
-type:type || "A",
+type:
+cloudflare.type,
 
-proxy:false,
+proxy:
+cloudflare.proxied,
+
+recordId:
+cloudflare.id,
 
 owner:user._id,
 
 createdBy:{
+
 username:user.username,
+
 role:user.role
+
 }
 
 })
 
 
+result.push(domain)
+
 
 }
 
 
 
-// tambah penggunaan
+
+// tambah limit user
 
 if(user.role === "User"){
 
@@ -192,23 +289,38 @@ await user.save()
 
 
 
+
 res.json({
 
 success:true,
 
-message:"DNS berhasil dibuat",
+message:
+"SUBDOMAIN CONFIG SUCCESS",
+
+creator:
+user.username,
+
+role:
+user.role,
 
 result
 
 })
 
 
+
 }catch(err){
+
+
+console.log(err)
 
 
 res.status(500).json({
 
-message:err.message
+success:false,
+
+message:
+err.message
 
 })
 
