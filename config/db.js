@@ -1,19 +1,15 @@
 const mongoose = require("mongoose")
 
 
-let isConnected = false
-
+let connected = false
 
 
 async function connectDB(){
 
 
-if(isConnected){
-
-return
-
+if(connected){
+    return
 }
-
 
 
 try{
@@ -24,8 +20,7 @@ process.env.MONGO_URI
 )
 
 
-
-isConnected = true
+connected = true
 
 
 console.log(
@@ -49,7 +44,6 @@ throw err
 
 
 }
-
 
 
 module.exports = connectDB
