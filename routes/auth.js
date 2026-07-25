@@ -7,77 +7,123 @@ const User = require("../models/User")
 const router = express.Router()
 
 
+
 // =======================
 // REGISTER
 // =======================
 
 router.post("/register", async(req,res)=>{
 
-    try{
-
-        const {
-            username,
-            email,
-            password
-        } = req.body
+try{
 
 
-        const check =
-        await User.findOne({
-            email
-        })
+const {
+username,
+email,
+password
+}=req.body
 
 
-        if(check)
-        return res.status(400).json({
-            message:"Email sudah terdaftar"
-        })
 
+if(
+!username ||
+!email ||
+!password
+){
 
-        const hash =
-        await bcrypt.hash(
-            password,
-            10
-        )
+return res.status(400).json({
 
-
-        const user =
-        await User.create({
-
-            username,
-
-            email,
-
-            password:hash,
-
-            role:"User"
-
-        })
-
-
-        res.json({
-
-            success:true,
-
-            message:"Register berhasil",
-
-            user:{
-                username:user.username,
-                role:user.role
-            }
-
-        })
-
-
-    }catch(err){
-
-        res.status(500).json({
-            message:err.message
-        })
-
-    }
+message:"Data tidak lengkap"
 
 })
+
+}
+
+
+
+const cleanEmail =
+email.toLowerCase()
+
+
+
+const check =
+await User.findOne({
+
+email:cleanEmail
+
+})
+
+
+
+if(check){
+
+return res.status(400).json({
+
+message:"Email sudah terdaftar"
+
+})
+
+}
+
+
+
+const hash =
+await bcrypt.hash(
+password,
+10
+)
+
+
+
+const user =
+await User.create({
+
+username,
+
+email:cleanEmail,
+
+password:hash,
+
+role:"User"
+
+})
+
+
+
+res.json({
+
+success:true,
+
+message:"Register berhasil",
+
+user:{
+
+username:user.username,
+
+role:user.role
+
+}
+
+})
+
+
+
+}catch(err){
+
+
+res.status(500).json({
+
+message:err.message
+
+})
+
+
+}
+
+
+})
+
+
 
 
 
@@ -92,36 +138,63 @@ try{
 
 
 const {
-    email,
-    password
+email,
+password
 }=req.body
+
+
+
+const cleanEmail =
+email.toLowerCase()
 
 
 
 const user =
 await User.findOne({
-    email
+
+email:cleanEmail
+
 })
 
 
-if(!user)
+
+if(!user){
+
 return res.status(404).json({
-    message:"User tidak ditemukan"
+
+message:"User tidak ditemukan"
+
 })
+
+}
 
 
 
 const match =
 await bcrypt.compare(
-    password,
-    user.password
+
+password,
+
+user.password
+
 )
 
 
-if(!match)
+
+if(!match){
+
 return res.status(401).json({
-    message:"Password salah"
+
+message:"Password salah"
+
 })
+
+}
+
+
+
+let role =
+user.role
 
 
 
@@ -129,39 +202,58 @@ return res.status(401).json({
 // OWNER CHECK ENV
 // =======================
 
-let role = user.role
-
-
 if(
-email === process.env.OWNER_EMAIL
+cleanEmail ===
+process.env.OWNER_EMAIL
 ){
 
-    role="Owner"
+
+role="Owner"
+
+
+
+if(user.role !== "Owner"){
+
+
+user.role="Owner"
+
+await user.save()
+
+
+}
+
 
 }
 
 
 
-// TOKEN
+
 
 const token =
 jwt.sign(
 
 {
-    id:user._id,
-    username:user.username,
-    email:user.email,
-    role
+
+id:user._id,
+
+username:user.username,
+
+email:user.email,
+
+role
 
 },
 
 process.env.JWT_SECRET,
 
 {
-    expiresIn:"2y"
+
+expiresIn:"2y"
+
 }
 
 )
+
 
 
 
@@ -173,13 +265,17 @@ message:"Login berhasil",
 
 token,
 
+
 profile:{
 
 username:user.username,
 
+email:user.email,
+
 role
 
 }
+
 
 })
 
@@ -187,14 +283,19 @@ role
 
 }catch(err){
 
+
 res.status(500).json({
+
 message:err.message
+
 })
+
 
 }
 
 
 })
+
 
 
 module.exports = router
