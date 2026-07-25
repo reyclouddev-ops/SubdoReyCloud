@@ -6,24 +6,33 @@ new mongoose.Schema({
 
 hostname:{
     type:String,
-    required:true
+    required:true,
+    trim:true
 },
 
 
 domain:{
     type:String,
-    required:true
+    required:true,
+    unique:true,
+    trim:true
 },
 
 
 target:{
     type:String,
-    required:true
+    required:true,
+    trim:true
 },
 
 
 type:{
     type:String,
+    enum:[
+        "A",
+        "AAAA",
+        "CNAME"
+    ],
     default:"A"
 },
 
@@ -36,25 +45,38 @@ proxy:{
 
 owner:{
     type:mongoose.Schema.Types.ObjectId,
-    ref:"User"
+    ref:"User",
+    required:true
 },
 
 
 createdBy:{
-    username:String,
-    role:String
+
+    username:{
+        type:String
+    },
+
+    role:{
+        type:String
+    }
+
 },
 
 
 status:{
     type:String,
+    enum:[
+        "active",
+        "deleted"
+    ],
     default:"active"
 }
 
 
 },{
-timestamps:true
+    timestamps:true
 })
+
 
 
 module.exports =
