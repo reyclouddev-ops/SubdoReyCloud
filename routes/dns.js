@@ -100,7 +100,7 @@ target,
 
 type:"A",
 
-proxy:true,
+proxy:false,
 
 owner:user._id,
 
@@ -123,7 +123,7 @@ target,
 
 type:"A",
 
-proxy:true,
+proxy:false,
 
 owner:user._id,
 
@@ -159,7 +159,7 @@ target,
 
 type:type || "A",
 
-proxy:true,
+proxy:false,
 
 owner:user._id,
 
