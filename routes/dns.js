@@ -77,7 +77,7 @@ if(type === "panel"){
 
 
 const panel =
-`panel-${hostname}.${MAIN_DOMAIN}`
+`${hostname}.${MAIN_DOMAIN}`
 
 
 const node =
@@ -92,7 +92,7 @@ result.push(node)
 
 await DNS.create({
 
-hostname:`panel-${hostname}`,
+hostname:`${hostname}`,
 
 domain:panel,
 
