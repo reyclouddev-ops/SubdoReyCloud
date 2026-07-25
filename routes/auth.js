@@ -33,7 +33,9 @@ if(
 
 return res.status(400).json({
 
-message:"Data tidak lengkap"
+success:false,
+
+message:"Username, email, dan password wajib diisi"
 
 })
 
@@ -42,11 +44,13 @@ message:"Data tidak lengkap"
 
 
 const cleanEmail =
-email.toLowerCase()
+email.toLowerCase().trim()
 
 
 
-const check =
+// cek email
+
+const exist =
 await User.findOne({
 
 email:cleanEmail
@@ -55,17 +59,21 @@ email:cleanEmail
 
 
 
-if(check){
+if(exist){
 
 return res.status(400).json({
 
-message:"Email sudah terdaftar"
+success:false,
+
+message:"Email sudah digunakan"
 
 })
 
 }
 
 
+
+// hash password
 
 const hash =
 await bcrypt.hash(
@@ -76,9 +84,9 @@ password,
 
 
 const user =
-await User.create({
+new User({
 
-username,
+username:username.trim(),
 
 email:cleanEmail,
 
@@ -90,7 +98,11 @@ role:"User"
 
 
 
-res.json({
+await user.save()
+
+
+
+return res.json({
 
 success:true,
 
@@ -99,6 +111,8 @@ message:"Register berhasil",
 user:{
 
 username:user.username,
+
+email:user.email,
 
 role:user.role
 
@@ -111,7 +125,16 @@ role:user.role
 }catch(err){
 
 
-res.status(500).json({
+console.log(
+"REGISTER ERROR:",
+err
+)
+
+
+
+return res.status(500).json({
+
+success:false,
 
 message:err.message
 
@@ -144,8 +167,25 @@ password
 
 
 
+if(
+!email ||
+!password
+){
+
+return res.status(400).json({
+
+success:false,
+
+message:"Email dan password wajib diisi"
+
+})
+
+}
+
+
+
 const cleanEmail =
-email.toLowerCase()
+email.toLowerCase().trim()
 
 
 
@@ -162,7 +202,9 @@ if(!user){
 
 return res.status(404).json({
 
-message:"User tidak ditemukan"
+success:false,
+
+message:"Akun tidak ditemukan"
 
 })
 
@@ -170,7 +212,7 @@ message:"User tidak ditemukan"
 
 
 
-const match =
+const check =
 await bcrypt.compare(
 
 password,
@@ -181,9 +223,11 @@ user.password
 
 
 
-if(!match){
+if(!check){
 
 return res.status(401).json({
+
+success:false,
 
 message:"Password salah"
 
@@ -198,33 +242,25 @@ user.role
 
 
 
-// =======================
-// OWNER CHECK ENV
-// =======================
+// OWNER ENV
 
 if(
 cleanEmail ===
-process.env.OWNER_EMAIL
+process.env.OWNER_EMAIL?.toLowerCase()
 ){
-
 
 role="Owner"
 
 
-
 if(user.role !== "Owner"){
-
 
 user.role="Owner"
 
 await user.save()
 
-
 }
 
-
 }
-
 
 
 
@@ -257,7 +293,7 @@ expiresIn:"2y"
 
 
 
-res.json({
+return res.json({
 
 success:true,
 
@@ -276,15 +312,22 @@ role
 
 }
 
-
 })
-
 
 
 }catch(err){
 
 
-res.status(500).json({
+console.log(
+"LOGIN ERROR:",
+err
+)
+
+
+
+return res.status(500).json({
+
+success:false,
 
 message:err.message
 
