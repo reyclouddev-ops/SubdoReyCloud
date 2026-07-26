@@ -1,0 +1,452 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
+}
+
+body{
+
+background:#070b14;
+
+min-height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+padding:20px;
+
+color:#fff;
+
+overflow-x:hidden;
+
+}
+
+.background{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+radial-gradient(circle at top left,#2563eb33,transparent 35%),
+radial-gradient(circle at bottom right,#06b6d433,transparent 35%),
+linear-gradient(180deg,#070b14,#0f172a);
+
+z-index:-1;
+
+}
+
+.container{
+
+width:100%;
+max-width:650px;
+
+}
+
+.card{
+
+background:rgba(17,24,39,.75);
+
+backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:24px;
+
+padding:35px;
+
+box-shadow:
+
+0 0 30px rgba(37,99,235,.15),
+
+0 0 80px rgba(6,182,212,.08);
+
+animation:show .5s ease;
+
+}
+
+@keyframes show{
+
+from{
+
+opacity:0;
+
+transform:translateY(25px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.success-icon{
+
+width:90px;
+
+height:90px;
+
+margin:auto;
+
+border-radius:50%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:45px;
+
+background:#16a34a;
+
+box-shadow:
+
+0 0 25px rgba(22,163,74,.35);
+
+margin-bottom:20px;
+
+animation:pulse 2s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+.card h1{
+
+text-align:center;
+
+font-size:30px;
+
+margin-bottom:10px;
+
+}
+
+.card p{
+
+text-align:center;
+
+color:#9ca3af;
+
+margin-bottom:25px;
+
+}
+
+hr{
+
+border:none;
+
+height:1px;
+
+background:rgba(255,255,255,.08);
+
+margin-bottom:25px;
+
+}
+
+.box{
+
+margin-bottom:18px;
+
+}
+
+.box label{
+
+display:block;
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:8px;
+
+color:#cbd5e1;
+
+}
+
+.box div{
+
+background:#111827;
+
+padding:15px;
+
+border-radius:14px;
+
+border:1px solid rgba(255,255,255,.05);
+
+word-break:break-all;
+
+line-height:1.7;
+
+}
+/* ===========================
+   BUTTONS
+=========================== */
+
+.buttons{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:15px;
+
+margin-top:25px;
+
+}
+
+.buttons button{
+
+height:52px;
+
+border:none;
+
+border-radius:14px;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+/* Copy */
+
+#copyBtn{
+
+background:#2563eb;
+
+color:#fff;
+
+}
+
+#copyBtn:hover{
+
+background:#1d4ed8;
+
+transform:translateY(-3px);
+
+box-shadow:
+0 10px 25px rgba(37,99,235,.35);
+
+}
+
+/* Open */
+
+#openBtn{
+
+background:#16a34a;
+
+color:#fff;
+
+}
+
+#openBtn:hover{
+
+background:#15803d;
+
+transform:translateY(-3px);
+
+box-shadow:
+0 10px 25px rgba(22,163,74,.35);
+
+}
+
+/* Dashboard */
+
+.dashboard{
+
+width:100%;
+
+height:52px;
+
+border:none;
+
+border-radius:14px;
+
+background:#111827;
+
+color:#fff;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+.dashboard:hover{
+
+background:#1f2937;
+
+border-color:#2563eb;
+
+transform:translateY(-3px);
+
+box-shadow:
+0 10px 25px rgba(37,99,235,.20);
+
+}
+
+/* ===========================
+   HOVER BOX
+=========================== */
+
+.box div{
+
+transition:.25s;
+
+}
+
+.box div:hover{
+
+border-color:#2563eb;
+
+box-shadow:
+
+0 0 18px rgba(37,99,235,.18);
+
+}
+
+/* ===========================
+   SUCCESS ANIMATION
+=========================== */
+
+.success-icon{
+
+transition:.35s;
+
+}
+
+.success-icon:hover{
+
+transform:rotate(10deg) scale(1.08);
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:768px){
+
+.card{
+
+padding:22px;
+
+}
+
+.card h1{
+
+font-size:24px;
+
+}
+
+.success-icon{
+
+width:75px;
+
+height:75px;
+
+font-size:36px;
+
+}
+
+.buttons{
+
+grid-template-columns:1fr;
+
+}
+
+.dashboard{
+
+margin-top:5px;
+
+}
+
+.box div{
+
+font-size:14px;
+
+}
+
+}
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#2563eb;
+
+border-radius:20px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#111827;
+
+}
+
+/* ===========================
+   GLOW
+=========================== */
+
+.card:hover{
+
+box-shadow:
+
+0 0 40px rgba(37,99,235,.20),
+
+0 0 100px rgba(6,182,212,.10);
+
+}
