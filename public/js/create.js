@@ -1,196 +1,282 @@
-const API =
-"/api/dns/create"
+const API = "/api/dns/create"
 
-
+const btn =
+document.getElementById("createBtn")
 
 async function createDNS(){
-
 
 const token =
 localStorage.getItem("token")
 
-
-
 if(!token){
 
-location.href =
-"login.html"
+location.href="login.html"
+
+return
 
 }
 
+const type =
+document.getElementById("type").value
 
+const hostname =
+document.getElementById("hostname")
+.value
+.trim()
+.toLowerCase()
 
-const data = {
+const target =
+document.getElementById("target")
+.value
+.trim()
 
+const proxied =
+document.getElementById("proxy")
+.value==="true"
 
-hostname:
-document.getElementById(
-"hostname"
-).value,
+if(!hostname){
 
+alert("Masukkan hostname.")
 
-target:
-document.getElementById(
-"target"
-).value,
-
-
-type:
-document.getElementById(
-"type"
-).value,
-
-
-proxied:
-document.getElementById(
-"proxy"
-).value === "true"
-
+return
 
 }
 
+if(!target){
 
+alert("Masukkan target.")
+
+return
+
+}
+
+btn.disabled=true
+
+btn.innerHTML="⏳ Creating..."
+
+const data={
+
+type,
+
+hostname,
+
+target,
+
+proxied
+
+}
+
+try{
 
 const res =
-await fetch(
-
-API,
-
-{
+await fetch(API,{
 
 method:"POST",
 
-
 headers:{
 
+"Content-Type":"application/json",
 
-"Content-Type":
-"application/json",
-
-
-"Authorization":
+Authorization:
 "Bearer "+token
 
-
 },
-
 
 body:
 JSON.stringify(data)
 
-
-}
-
-)
-
-
+})
 
 const json =
 await res.json()
 
+const result =
+document.getElementById("result")
 
+if(!json.success){
 
-const box =
-document.getElementById(
-"result"
-)
+result.innerHTML=`
 
-
-
-if(json.success){
-
-
-let output = `
+<div class="user-box">
 
 <h3>
-✅ SUBDOMAIN CONFIG SUCCESS
+
+❌ Gagal
+
 </h3>
 
+<p>
+
+${json.message}
+
+</p>
+
+</div>
+
+`
+
+btn.disabled=false
+
+btn.innerHTML="🚀 Create DNS"
+
+return
+
+}
+
+let html=`
+
+<div class="user-box">
+
+<h3>
+
+✅ DNS Berhasil
+
+</h3>
 
 <hr>
 
+`
 
-<b>Creator:</b>
-${json.creator}
+if(type==="panel"){
 
+html+=`
+
+<b>
+
+🖥 Panel
+
+</b>
 
 <br>
 
+${json.result.panel}
 
-<b>Role:</b>
-${json.role}
+<br><br>
 
+<b>
+
+🌐 Node
+
+</b>
+
+<br>
+
+${json.result.node}
 
 <br><br>
 
 `
 
+}else{
 
+html+=`
 
-json.result.forEach(item=>{
+<b>
 
+🌐 Domain
 
-if(typeof item === "object"){
+</b>
 
-
-output += `
-
-<b>🌐 Panel</b>
 <br>
 
-${item.panel}
+${json.result.domain}
 
 <br><br>
 
+`
 
-<b>🌐 Node</b>
+}
+
+html+=`
+
+<b>
+
+📄 Record
+
+</b>
+
 <br>
 
-${item.node}
+${json.result.record}
+
+<br><br>
+
+<b>
+
+🎯 Target
+
+</b>
 
 <br>
 
+${json.result.target}
+
+<br><br>
+
+<b>
+
+☁ Proxy
+
+</b>
+
+<br>
+
+${json.result.proxy}
+
+<br><br>
+
+<button onclick="copyDomain('${
+type==="panel"
+?json.result.panel
+:json.result.domain
+}')">
+
+📋 Copy Domain
+
+</button>
+
+</div>
 
 `
 
-}else{
+result.innerHTML=html
 
+}catch(err){
 
-output += `
+document.getElementById("result").innerHTML=`
 
-<b>🌐 Domain</b>
-<br>
+<div class="user-box">
 
-${item}
+<h3>
 
-<br>
+❌ Error
+
+</h3>
+
+<p>
+
+${err.message}
+
+</p>
+
+</div>
 
 `
 
 }
 
+btn.disabled=false
 
-})
-
-
-
-box.innerHTML =
-output
-
-
-
-}else{
-
-
-box.innerHTML = `
-
-❌ ${json.message}
-
-`
-
+btn.innerHTML="🚀 Create DNS"
 
 }
 
+btn.onclick=createDNS
 
+function copyDomain(domain){
+
+navigator.clipboard.writeText(domain)
+
+alert("Domain berhasil disalin.")
 
 }
