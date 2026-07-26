@@ -48,7 +48,7 @@ message:"Hostname kosong"
 }
 
 const panel =
-`panel.${hostname}.${MAIN_DOMAIN}`
+`${hostname}.${MAIN_DOMAIN}`
 
 const website =
 `${hostname}.${MAIN_DOMAIN}`
