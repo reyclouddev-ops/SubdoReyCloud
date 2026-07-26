@@ -14,22 +14,22 @@ const DOMAIN = "legionteknologi.my.id"
 
 hostname.addEventListener("input", () => {
 
-const host =
-hostname.value
-.trim()
-.toLowerCase()
+    const host = hostname.value.trim().toLowerCase()
 
-preview.innerText =
-host
-? `${host}.${DOMAIN}`
-: `hostname.${DOMAIN}`
+    preview.innerText =
+        host
+            ? `${host}.${DOMAIN}`
+            : `hostname.${DOMAIN}`
 
-deployBtn.disabled = true
+    deployBtn.disabled = true
 
-status.className = ""
+    status.className = ""
 
-status.innerHTML =
-"⚪ Belum Dicek"
+    status.innerHTML = "⚪ Belum Dicek"
+
+    if (platform.value === "vercel") {
+        renderPlatform()
+    }
 
 })
 
@@ -302,107 +302,98 @@ status.innerHTML =
 // Deploy
 // ===========================
 
-deployBtn.onclick =
-async()=>{
+deployBtn.onclick = async () => {
 
-const host =
-hostname.value
-.trim()
+    const host = hostname.value.trim().toLowerCase()
 
-const data = {
+    if (!host) {
+        alert("Masukkan hostname.")
+        return
+    }
 
-hostname:host,
+    const data = {
+        hostname: host,
+        platform: platform.value
+    }
 
-platform:platform.value
+    const target = document.getElementById("target")
+
+    if (target) {
+
+        if (!target.value.trim()) {
+            alert("Target wajib diisi.")
+            return
+        }
+
+        data.target = target.value.trim()
+
+    }
+
+    const type = document.getElementById("recordType")
+
+    if (type) {
+        data.type = type.value
+    }
+
+    deployBtn.disabled = true
+    deployBtn.innerHTML = "⏳ Deploying..."
+
+    try {
+
+        const res = await fetch("/api/dns/platform", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                Authorization:
+                    "Bearer " + localStorage.getItem("token")
+
+            },
+
+            body: JSON.stringify(data)
+
+        })
+
+        const json = await res.json()
+
+        if (!res.ok || !json.success) {
+
+            throw new Error(
+                json.message || "Deploy gagal."
+            )
+
+        }
+
+        const domain =
+            `${host}.${DOMAIN}`
+
+        localStorage.setItem(
+            "deploySuccess",
+            JSON.stringify({
+
+                domain,
+
+                platform: platform.value
+
+            })
+        )
+
+        window.location.href =
+            "/deploy-success.html"
+
+    } catch (err) {
+
+        alert(err.message)
+
+        deployBtn.disabled = false
+        deployBtn.innerHTML = "🚀 Deploy"
+
+    }
 
 }
-
-const target =
-document.getElementById("target")
-
-if(target){
-
-data.target =
-target.value
-
-}
-
-const type =
-document.getElementById("recordType")
-
-if(type){
-
-data.type =
-type.value
-
-}
-
-deployBtn.disabled = true
-
-deployBtn.innerHTML =
-"⏳ Deploying..."
-
-try{
-
-const res =
-await fetch(
-
-"/api/dns/platform",
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":
-"application/json",
-
-Authorization:
-"Bearer " +
-localStorage.getItem("token")
-
-},
-
-body:
-JSON.stringify(data)
-
-}
-
-)
-
-const json =
-await res.json()
-
-if(!json.success){
-
-alert(
-json.message
-)
-
-deployBtn.disabled = false
-
-deployBtn.innerHTML =
-"🚀 Deploy"
-
-return
-
-}
-
-alert(
-
-"DNS berhasil dibuat!"
-
-)
-
-window.location.href =
-"/history.html"
-
-}catch(err){
-
-alert(
-"Gagal Deploy."
-)
 
 deployBtn.disabled = false
 
