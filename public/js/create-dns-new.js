@@ -19,7 +19,7 @@ hostname.addEventListener("input", () => {
     preview.innerText =
         host
             ? `${host}.${DOMAIN}`
-            : `hostname.${DOMAIN}`
+            : `${host}.${DOMAIN}`
 
     deployBtn.disabled = true
 
