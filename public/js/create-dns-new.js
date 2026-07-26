@@ -17,9 +17,9 @@ hostname.addEventListener("input", () => {
     const host = hostname.value.trim().toLowerCase()
 
     preview.innerText =
-        host
-            ? `${host}.${DOMAIN}`
-            : `${host}.${DOMAIN}`
+host
+? `${host}.${DOMAIN}`
+: `${hostname.placeholder}.${DOMAIN}`
 
     deployBtn.disabled = true
 
