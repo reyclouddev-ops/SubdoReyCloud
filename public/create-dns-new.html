@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>ReyCloud - Platform Deploy</title>
+
+<link rel="stylesheet"
+href="css/create-dns-new.css">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="container">
+
+<div class="card">
+
+<div class="header">
+
+<h1>
+🚀 Platform Deploy
+</h1>
+
+<p>
+Deploy Subdomain ke Platform Favorit
+</p>
+
+</div>
+
+<div class="line"></div>
+
+<!-- HOSTNAME -->
+
+<div class="input-group">
+
+<label>
+
+Hostname
+
+</label>
+
+<input
+type="text"
+id="hostname"
+placeholder="Contoh : rey">
+
+</div>
+
+<!-- PREVIEW -->
+
+<div class="preview">
+
+<label>
+
+Preview Domain
+
+</label>
+
+<div
+class="preview-box"
+id="preview">
+
+hostname.legionteknologi.my.id
+
+</div>
+
+</div>
+
+<!-- PLATFORM -->
+
+<div class="input-group">
+
+<label>
+
+Platform
+
+</label>
+
+<select
+id="platform">
+
+<option value="vercel">
+
+🚀 Vercel
+
+</option>
+
+<option value="netlify">
+
+🌐 Netlify
+
+</option>
+
+<option value="github">
+
+🐙 GitHub Pages
+
+</option>
+
+<option value="cloudflare">
+
+☁ Cloudflare Pages
+
+</option>
+
+<option value="custom">
+
+⚙ Custom
+
+</option>
+
+</select>
+
+</div>
+
+<!-- EXTRA -->
+
+<div id="extraField">
+
+</div>
+
+<!-- STATUS -->
+
+<div class="status-box">
+
+<div
+id="status">
+
+⚪ Belum Dicek
+
+</div>
+
+</div>
+
+<!-- BUTTON -->
+
+<div class="button-group">
+
+<button
+id="checkBtn">
+
+🔍 Check Hostname
+
+</button>
+
+<button
+id="deployBtn"
+disabled>
+
+🚀 Deploy
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script
+src="js/create-dns-new.js">
+
+</script>
+
+</body>
+
+</html>
