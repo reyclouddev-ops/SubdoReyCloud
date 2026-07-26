@@ -5,13 +5,11 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>DNS Manual - ReyCloud</title>
 
-<link rel="stylesheet"
-href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -23,7 +21,7 @@ href="css/style.css">
 
 <p class="subtitle">
 
-Membuat Record A dan AAAA
+Buat Record A / AAAA dengan mudah.
 
 </p>
 
@@ -31,75 +29,31 @@ Membuat Record A dan AAAA
 
 <label>
 
-Jenis Record
+Jenis DNS
 
 </label>
 
 <select id="type">
 
-<option value="A">
-
-🌐 A Record (IPv4)
-
+<option value="panel">
+🖥️ Panel Pterodactyl
 </option>
 
-<option value="AAAA">
+<option value="website">
+🌍 Website
+</option>
 
-🌍 AAAA Record (IPv6)
+<option value="custom">
+📦 Custom A
+</option>
 
+<option value="aaaa">
+🌐 AAAA (IPv6)
 </option>
 
 </select>
 
-<label>
-
-Hostname
-
-</label>
-
-<input
-
-id="hostname"
-
-placeholder="server01"
-
-autocomplete="off"
-
->
-
-<div class="dns-preview">
-
-🌐
-
-<span id="preview">
-
-server01.legionteknologi.my.id
-
-</span>
-
-</div>
-
-<label>
-
-Target
-
-</label>
-
-<input
-
-id="target"
-
-placeholder="103.xxx.xxx.xxx"
-
-autocomplete="off"
-
->
-
-<small id="targetInfo">
-
-Masukkan alamat IPv4.
-
-</small>
+<div id="dynamicForm"></div>
 
 <label>
 
@@ -123,7 +77,7 @@ Cloudflare Proxy
 
 </select>
 
-<button onclick="createDNS()">
+<button id="createBtn">
 
 🚀 Create DNS
 
@@ -140,63 +94,234 @@ onclick="location.href='dashboard.html'">
 
 </div>
 
-<script src="js/create.js"></script>
-
 <script>
 
-const hostname =
-document.getElementById("hostname")
-
-const preview =
-document.getElementById("preview")
+const DOMAIN = "legionteknologi.my.id"
 
 const type =
 document.getElementById("type")
 
-const target =
-document.getElementById("target")
+const form =
+document.getElementById("dynamicForm")
 
-const info =
-document.getElementById("targetInfo")
+renderForm()
 
-const DOMAIN =
-"legionteknologi.my.id"
+type.onchange = renderForm
 
-hostname.oninput = ()=>{
+function renderForm(){
 
-const value =
-hostname.value.trim().toLowerCase()
+switch(type.value){
 
-preview.innerHTML =
+case "panel":
 
-value
-?
+form.innerHTML = `
 
-value + "." + DOMAIN
+<label>
 
-:
+Hostname
 
-"hostname." + DOMAIN
+</label>
+
+<input
+id="hostname"
+placeholder="rey">
+
+<div class="dns-preview">
+
+Panel :
+<b id="panelPreview">
+
+panel.rey.${DOMAIN}
+
+</b>
+
+</div>
+
+<div class="dns-preview">
+
+Node :
+<b id="nodePreview">
+
+node.rey.${DOMAIN}
+
+</b>
+
+</div>
+
+<label>
+
+IP VPS
+
+</label>
+
+<input
+id="target"
+placeholder="103.xxx.xxx.xxx">
+
+`
+
+break
+
+case "website":
+
+form.innerHTML = `
+
+<label>
+
+Hostname
+
+</label>
+
+<input
+id="hostname"
+placeholder="blog">
+
+<div class="dns-preview">
+
+<b id="panelPreview">
+
+blog.${DOMAIN}
+
+</b>
+
+</div>
+
+<label>
+
+IP Hosting
+
+</label>
+
+<input
+id="target"
+placeholder="103.xxx.xxx.xxx">
+
+`
+
+break
+
+case "custom":
+
+form.innerHTML = `
+
+<label>
+
+Hostname
+
+</label>
+
+<input
+id="hostname"
+placeholder="custom">
+
+<div class="dns-preview">
+
+<b id="panelPreview">
+
+custom.${DOMAIN}
+
+</b>
+
+</div>
+
+<label>
+
+IPv4
+
+</label>
+
+<input
+id="target"
+placeholder="103.xxx.xxx.xxx">
+
+`
+
+break
+
+case "aaaa":
+
+form.innerHTML = `
+
+<label>
+
+Hostname
+
+</label>
+
+<input
+id="hostname"
+placeholder="ipv6">
+
+<div class="dns-preview">
+
+<b id="panelPreview">
+
+ipv6.${DOMAIN}
+
+</b>
+
+</div>
+
+<label>
+
+IPv6
+
+</label>
+
+<input
+id="target"
+placeholder="2404:6800:4003:c02::64">
+
+`
+
+break
 
 }
 
-type.onchange = ()=>{
+setTimeout(bindPreview,50)
 
-if(type.value==="A"){
+}
 
-target.placeholder =
-"103.xxx.xxx.xxx"
+function bindPreview(){
 
-info.innerHTML =
-"Masukkan alamat IPv4."
+const host =
+document.getElementById("hostname")
+
+if(!host) return
+
+host.oninput = ()=>{
+
+const value =
+host.value.trim().toLowerCase() || "hostname"
+
+const panel =
+document.getElementById("panelPreview")
+
+const node =
+document.getElementById("nodePreview")
+
+if(panel){
+
+if(type.value==="panel"){
+
+panel.innerHTML =
+`panel.${value}.${DOMAIN}`
 
 }else{
 
-target.placeholder =
-"2404:6800:4003:c02::64"
+panel.innerHTML =
+`${value}.${DOMAIN}`
 
-info.innerHTML =
-"Masukkan alamat IPv6."
+}
+
+}
+
+if(node){
+
+node.innerHTML =
+`node.${value}.${DOMAIN}`
+
+}
 
 }
 
@@ -204,5 +329,8 @@ info.innerHTML =
 
 </script>
 
+<script src="js/create.js"></script>
+
 </body>
+
 </html>
