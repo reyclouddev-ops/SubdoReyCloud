@@ -225,3 +225,51 @@ button:hover{
 
 
 }
+
+#menu{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+margin-top:20px;
+
+}
+
+#menu button{
+
+height:100px;
+
+border:none;
+
+border-radius:15px;
+
+background:#111827;
+
+color:white;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+#menu button:hover{
+
+background:#1f2937;
+
+border-color:#2563eb;
+
+transform:translateY(-3px);
+
+box-shadow:0 10px 25px rgba(37,99,235,.20);
+
+}
