@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>DNS Manual - ReyCloud</title>
+
+<link rel="stylesheet"
+href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>☁️ DNS Manual</h2>
+
+<p class="subtitle">
+
+Membuat Record A dan AAAA
+
+</p>
+
+<hr>
+
+<label>
+
+Jenis Record
+
+</label>
+
+<select id="type">
+
+<option value="A">
+
+🌐 A Record (IPv4)
+
+</option>
+
+<option value="AAAA">
+
+🌍 AAAA Record (IPv6)
+
+</option>
+
+</select>
+
+<label>
+
+Hostname
+
+</label>
+
+<input
+
+id="hostname"
+
+placeholder="server01"
+
+autocomplete="off"
+
+>
+
+<div class="dns-preview">
+
+🌐
+
+<span id="preview">
+
+server01.legionteknologi.my.id
+
+</span>
+
+</div>
+
+<label>
+
+Target
+
+</label>
+
+<input
+
+id="target"
+
+placeholder="103.xxx.xxx.xxx"
+
+autocomplete="off"
+
+>
+
+<small id="targetInfo">
+
+Masukkan alamat IPv4.
+
+</small>
+
+<label>
+
+Cloudflare Proxy
+
+</label>
+
+<select id="proxy">
+
+<option value="true">
+
+🟠 Proxy ON
+
+</option>
+
+<option value="false">
+
+⚪ DNS Only
+
+</option>
+
+</select>
+
+<button onclick="createDNS()">
+
+🚀 Create DNS
+
+</button>
+
+<button
+onclick="location.href='dashboard.html'">
+
+🏠 Dashboard
+
+</button>
+
+<div id="result"></div>
+
+</div>
+
+<script src="js/create.js"></script>
+
+<script>
+
+const hostname =
+document.getElementById("hostname")
+
+const preview =
+document.getElementById("preview")
+
+const type =
+document.getElementById("type")
+
+const target =
+document.getElementById("target")
+
+const info =
+document.getElementById("targetInfo")
+
+const DOMAIN =
+"legionteknologi.my.id"
+
+hostname.oninput = ()=>{
+
+const value =
+hostname.value.trim().toLowerCase()
+
+preview.innerHTML =
+
+value
+?
+
+value + "." + DOMAIN
+
+:
+
+"hostname." + DOMAIN
+
+}
+
+type.onchange = ()=>{
+
+if(type.value==="A"){
+
+target.placeholder =
+"103.xxx.xxx.xxx"
+
+info.innerHTML =
+"Masukkan alamat IPv4."
+
+}else{
+
+target.placeholder =
+"2404:6800:4003:c02::64"
+
+info.innerHTML =
+"Masukkan alamat IPv6."
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
