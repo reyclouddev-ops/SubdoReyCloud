@@ -8,69 +8,57 @@ const deployBtn = document.getElementById("deployBtn")
 
 const DOMAIN = "legionteknologi.my.id"
 
-// ===========================
-// Preview Domain
-// ===========================
+// ==========================
+// UPDATE PREVIEW
+// ==========================
 
-const hostname =
-document.getElementById("hostname")
+function updatePreview() {
 
-const preview =
-document.getElementById("preview")
+    const host =
+        hostname.value
+            .trim()
+            .toLowerCase()
 
-const DOMAIN =
-"legionteknologi.my.id"
+    preview.innerHTML =
+        host
+            ? `${host}.${DOMAIN}`
+            : `${hostname.placeholder}.${DOMAIN}`
 
-function updatePreview(){
-
-const host =
-hostname.value
-.trim()
-.toLowerCase()
-
-preview.innerHTML =
-
-host
-?
-
-`${host}.${DOMAIN}`
-
-:
-
-`${hostname.placeholder}.${DOMAIN}`
+    if (platform.value === "vercel") {
+        renderPlatform()
+    }
 
 }
 
 hostname.addEventListener(
-"input",
-updatePreview
+    "input",
+    updatePreview
 )
 
 updatePreview()
 
-// ===========================
-// Platform Change
-// ===========================
+// ==========================
+// PLATFORM
+// ==========================
 
 platform.addEventListener(
-"change",
-renderPlatform
+    "change",
+    renderPlatform
 )
 
 renderPlatform()
 
-function renderPlatform(){
+function renderPlatform() {
 
-const value =
-platform.value
+    const host =
+        hostname.value.trim() ||
+        hostname.placeholder
 
-let html = ""
+    switch (platform.value) {
 
-switch(value){
+        case "vercel":
 
-case "vercel":
-
-html = `
+            extraField.innerHTML = `
 
 <div class="status-box">
 
@@ -80,15 +68,14 @@ html = `
 
 <p>
 
-ReyCloud akan otomatis membuat:
+ReyCloud akan otomatis membuat
+record berikut:
 
 </p>
 
 <br>
 
-<b>
-CNAME
-</b>
+<b>CNAME</b>
 
 <br>
 
@@ -102,25 +89,28 @@ cname.vercel-dns.com
 
 <small>
 
-Setelah DNS berhasil dibuat,
-tambahkan
-
-<b>${hostname.value || "hostname"}.${DOMAIN}</b>
-
-ke Domain Project Vercel.
+Tambahkan domain berikut
+ke Project Vercel:
 
 </small>
+
+<br><br>
+
+<b>
+
+${host}.${DOMAIN}
+
+</b>
 
 </div>
 
 `
 
-break
+            break
 
+        case "netlify":
 
-case "netlify":
-
-html = `
+            extraField.innerHTML = `
 
 <div class="input-group">
 
@@ -138,12 +128,11 @@ placeholder="mysite.netlify.app">
 
 `
 
-break
+            break
 
+        case "github":
 
-case "github":
-
-html = `
+            extraField.innerHTML = `
 
 <div class="input-group">
 
@@ -161,12 +150,11 @@ placeholder="username">
 
 `
 
-break
+            break
 
+        case "cloudflare":
 
-case "cloudflare":
-
-html = `
+            extraField.innerHTML = `
 
 <div class="input-group">
 
@@ -184,12 +172,11 @@ placeholder="myproject.pages.dev">
 
 `
 
-break
+            break
 
+        case "custom":
 
-case "custom":
-
-html = `
+            extraField.innerHTML = `
 
 <div class="input-group">
 
@@ -229,192 +216,275 @@ placeholder="Isi Target">
 
 `
 
-break
+            break
+
+    }
 
 }
 
-extraField.innerHTML = html
+// ==========================
+// CHECK HOSTNAME
+// ==========================
 
-}
+checkBtn.onclick = async () => {
 
-// ===========================
-// Check Hostname
-// ===========================
-
-checkBtn.onclick =
-async()=>{
-
-const host =
-hostname.value
-.trim()
-.toLowerCase()
-
-if(!host){
-
-alert(
-"Masukkan hostname."
-)
-
-return
-
-}
-
-status.className =
-"status-loading"
-
-status.innerHTML =
-
-`<span class="loading"></span>
-Checking...`
-
-deployBtn.disabled = true
-
-try{
-
-const res =
-await fetch(
-
-`/api/dns/check?hostname=${host}`
-
-)
-
-const json =
-await res.json()
-
-if(json.available){
-
-status.className =
-"status-success"
-
-status.innerHTML =
-"🟢 Hostname tersedia"
-
-deployBtn.disabled = false
-
-}else{
-
-status.className =
-"status-error"
-
-status.innerHTML =
-"🔴 Hostname sudah digunakan"
-
-}
-
-}catch(err){
-
-status.className =
-"status-error"
-
-status.innerHTML =
-"❌ Gagal cek server"
-
-}
-
-}
-
-// ===========================
-// Deploy
-// ===========================
-
-deployBtn.onclick = async () => {
-
-    const host = hostname.value.trim().toLowerCase()
+    const host =
+        hostname.value
+            .trim()
+            .toLowerCase()
 
     if (!host) {
+
         alert("Masukkan hostname.")
+
+        hostname.focus()
+
         return
-    }
-
-    const data = {
-        hostname: host,
-        platform: platform.value
-    }
-
-    const target = document.getElementById("target")
-
-    if (target) {
-
-        if (!target.value.trim()) {
-            alert("Target wajib diisi.")
-            return
-        }
-
-        data.target = target.value.trim()
 
     }
 
-    const type = document.getElementById("recordType")
+    status.className = "status-loading"
 
-    if (type) {
-        data.type = type.value
-    }
+    status.innerHTML = `
+<span class="loading"></span>
+Checking hostname...
+`
+
+    preview.innerHTML =
+        `🌐 ${host}.${DOMAIN}`
 
     deployBtn.disabled = true
-    deployBtn.innerHTML = "⏳ Deploying..."
 
     try {
 
-        const res = await fetch("/api/dns/platform", {
+        const res =
+            await fetch(
+                `/api/dns/check?hostname=${encodeURIComponent(host)}`
+            )
 
-            method: "POST",
+        const json =
+            await res.json()
 
-            headers: {
-
-                "Content-Type": "application/json",
-
-                Authorization:
-                    "Bearer " + localStorage.getItem("token")
-
-            },
-
-            body: JSON.stringify(data)
-
-        })
-
-        const json = await res.json()
-
-        if (!res.ok || !json.success) {
+        if (!res.ok) {
 
             throw new Error(
-                json.message || "Deploy gagal."
+                json.message || "Server Error"
             )
 
         }
 
-        const domain =
-            `${host}.${DOMAIN}`
+        if (json.available) {
+
+            status.className =
+                "status-success"
+
+            status.innerHTML = `
+✅ ${host}.${DOMAIN}
+tersedia
+`
+
+            preview.innerHTML = `
+🟢 ${host}.${DOMAIN}
+`
+
+            deployBtn.disabled = false
+
+        } else {
+
+            status.className =
+                "status-error"
+
+            status.innerHTML = `
+❌ ${host}.${DOMAIN}
+sudah digunakan
+`
+
+            preview.innerHTML = `
+🔴 ${host}.${DOMAIN}
+`
+
+            deployBtn.disabled = true
+
+        }
+
+    } catch (err) {
+
+        status.className =
+            "status-error"
+
+        status.innerHTML = `
+❌ ${err.message}
+`
+
+        deployBtn.disabled = true
+
+    }
+
+}
+// ==========================
+// DEPLOY
+// ==========================
+
+deployBtn.onclick = async () => {
+
+    const token =
+        localStorage.getItem("token")
+
+    if (!token) {
+
+        location.href = "login.html"
+
+        return
+
+    }
+
+    const host =
+        hostname.value
+            .trim()
+            .toLowerCase()
+
+    if (!host) {
+
+        alert("Masukkan hostname.")
+
+        return
+
+    }
+
+    const data = {
+
+        hostname: host,
+
+        platform: platform.value
+
+    }
+
+    // =====================
+    // TARGET
+    // =====================
+
+    const target =
+        document.getElementById("target")
+
+    if (target) {
+
+        if (!target.value.trim()) {
+
+            alert("Target wajib diisi.")
+
+            return
+
+        }
+
+        data.target =
+            target.value.trim()
+
+    }
+
+    // =====================
+    // CUSTOM TYPE
+    // =====================
+
+    const recordType =
+        document.getElementById("recordType")
+
+    if (recordType) {
+
+        data.type =
+            recordType.value
+
+    }
+
+    deployBtn.disabled = true
+
+    deployBtn.innerHTML =
+        "⏳ Deploying..."
+
+    try {
+
+        const res =
+            await fetch(
+                "/api/dns/platform",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            "Bearer " + token
+
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                }
+            )
+
+        const json =
+            await res.json()
+
+        if (!res.ok || !json.success) {
+
+            throw new Error(
+                json.message ||
+                "Deploy gagal."
+            )
+
+        }
+
+        // =====================
+        // SIMPAN HISTORY
+        // =====================
+
+        const history = {
+
+            hostname: host,
+
+            domain:
+                `${host}.${DOMAIN}`,
+
+            platform:
+                platform.value,
+
+            target:
+                data.target ||
+                "cname.vercel-dns.com",
+
+            createdAt:
+                new Date().toLocaleString("id-ID")
+
+        }
 
         localStorage.setItem(
             "deploySuccess",
-            JSON.stringify({
-
-                domain,
-
-                platform: platform.value
-
-            })
+            JSON.stringify(history)
         )
+
+        // =====================
+        // REDIRECT
+        // =====================
 
         window.location.href =
             "/deploy-success.html"
 
     } catch (err) {
 
-        alert(err.message)
+        status.className =
+            "status-error"
+
+        status.innerHTML =
+            `❌ ${err.message}`
 
         deployBtn.disabled = false
-        deployBtn.innerHTML = "🚀 Deploy"
+
+        deployBtn.innerHTML =
+            "🚀 Deploy"
 
     }
 
 }
-
-deployBtn.disabled = false
-
-deployBtn.innerHTML =
-"🚀 Deploy"
-
-}
-
-  }
