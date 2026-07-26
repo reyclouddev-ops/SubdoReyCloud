@@ -12,26 +12,41 @@ const DOMAIN = "legionteknologi.my.id"
 // Preview Domain
 // ===========================
 
-hostname.addEventListener("input", () => {
+const hostname =
+document.getElementById("hostname")
 
-    const host = hostname.value.trim().toLowerCase()
+const preview =
+document.getElementById("preview")
 
-    preview.innerText =
+const DOMAIN =
+"legionteknologi.my.id"
+
+function updatePreview(){
+
+const host =
+hostname.value
+.trim()
+.toLowerCase()
+
+preview.innerHTML =
+
 host
-? `${host}.${DOMAIN}`
-: `${hostname.placeholder}.${DOMAIN}`
+?
 
-    deployBtn.disabled = true
+`${host}.${DOMAIN}`
 
-    status.className = ""
+:
 
-    status.innerHTML = "⚪ Belum Dicek"
+`${hostname.placeholder}.${DOMAIN}`
 
-    if (platform.value === "vercel") {
-        renderPlatform()
-    }
+}
 
-})
+hostname.addEventListener(
+"input",
+updatePreview
+)
+
+updatePreview()
 
 // ===========================
 // Platform Change
