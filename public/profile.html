@@ -1,56 +1,61 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="id">
 
 <head>
 
-<title>
-Profile
-</title>
+<meta charset="UTF-8">
 
-<link rel="stylesheet"
-href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Profile</title>
+
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
-
 <body>
-
 
 <div class="card">
 
+<h2>👤 Profile</h2>
 
-<h2>
-👤 Profile
-</h2>
+<hr>
 
+<div class="user-box">
 
-<h3 id="name"></h3>
+<p><b>👤 Username</b></p>
+<p id="username">Loading...</p>
 
+<br>
 
-<p id="role"></p>
+<p><b>📧 Email</b></p>
+<p id="email">Loading...</p>
 
+<br>
 
-<p>
-ReyCloud Member
-</p>
+<p><b>🔑 Password</b></p>
+<p id="password">********</p>
 
+<br>
 
-
-<button onclick="logout()">
-
-Logout
-
-</button>
-
+<p><b>🛡️ Role</b></p>
+<p id="role">Loading...</p>
 
 </div>
 
+<br>
 
+<button onclick="location.href='dashboard.html'">
+🏠 Dashboard
+</button>
+
+<button onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
 
 <script src="js/profile.js"></script>
 
-
 </body>
-
 </html>
